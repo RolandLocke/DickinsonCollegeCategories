@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connections Game</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .connections-game {
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+        }
+        .connections-game .grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 10px; 
+            max-width: 100%; 
+            margin: auto; 
+        }
+        .connections-game .word { 
+            padding: 3vw; 
+            background: lightgray; 
+            border-radius: 5px; 
+            cursor: pointer; 
+        }
+        .connections-game .selected { 
+            background: yellow; 
+        }
+        .connections-game .correct { 
+            background: lightgreen; 
+        }
+        .connections-game .shadow-box { 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            padding: 20px; 
+            border-radius: 10px; 
+            background: white; 
+        }
+        @media (max-width: 768px) {
+            .connections-game .word { 
+                padding: 15px; 
+            }
+        }
+        @media (max-width: 480px) {
+            .connections-game .word { 
+                padding: 20px; 
+            }
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="connections-game container mt-5">
+        <h1 class="mb-4">Dickinson College Connections</h1>
+        <p class="mb-4">Find Four Groups of Four!</p>
+        <div class="shadow-box">
+            <div class="grid" id="grid"></div>
+        </div>
+        <div class="mt-4 d-flex flex-wrap justify-content-center"></div>
+            <button class="btn btn-primary mr-2 mb-2" onclick="shuffle()">Shuffle Board</button>
+            <button class="btn btn-success mr-2 mb-2" onclick="checkSelection()">Submit</button>
+            <button class="btn btn-secondary mb-2" onclick="deselectAll()">Deselect All</button>
+        </div>
+    </div>
+    <script>
+        // randomize the board
+        function randomizeBoard() {
+            words.sort(() => Math.random() - 0.5);
+            const grid = document.getElementById("grid");
+        }
+
+        //build the gameboard from the randomised list
+        function updateGameBoard() {
+            if (document.getElementById("grid").innerHTML !== "") {
+                document.getElementById("grid").innerHTML = "";
+                foundWords.forEach((item, index) => {
+                    let foundWordBox = document.createElement("div");
+                    foundWordBox.classList.add("word", "correct");
+                    foundWordBox.textContent = item.word;
+                    grid.appendChild(foundWordBox);
+                });
+            }
+            words.forEach((item, index) => {
+                let wordBox = document.createElement("div");
+                wordBox.classList.add("word");
+                wordBox.textContent = item.word;
+                wordBox.onclick = () => toggleSelection(wordBox, item, index);
+                grid.appendChild(wordBox);
+            });
+            selected = [];
+        }
+
+        function findSelectedWords() {
+            const element = document.getElementsByClassName("selected");
+
+            return Array.from(element);
+        }
+
+        //toggle select an iten from the board
+        function toggleSelection(div, item, index) {
+            if (selected.includes(index)) {
+                selected = selected.filter(i => i !== index);
+                div.classList.remove("selected");
+            } else if (selected.length < 4) {
+                selected.push(index);
+                div.classList.add("selected");
+            }
+        }
+
+        function moveSelectedItemsToFirstFour() {
+            const grid = document.getElementById("grid");
+            const elements = Array.from(grid.children);
+            const selectedElements = findSelectedWords();
+
+            let rowIndex;
+            if (foundWords.length < 8) {
+                rowIndex = 0;
+            } else if (foundWords.length < 12) {
+                rowIndex = 1;
+            } else if (foundWords.length < 16) {
+                rowIndex = 2;
+            } else {
+                rowIndex = 3;
+            }
+
+            const positions = elements.slice(rowIndex * 4, (rowIndex + 1) * 4).map(element => {
+                return {
+                    element: element,
+                    top: element.offsetTop,
+                    left: element.offsetLeft
+                };
+            });
+
+            selectedElements.forEach((element, index) => {
+                element.style.transition = "transform 0.5s";
+                element.style.transform = `translate(${positions[index].left - element.offsetLeft}px, ${positions[index].top - element.offsetTop}px)`;
+            });
+
+            setTimeout(() => {
+                element.style.transition = "";
+                element.style.transform = "";
+                grid.insertBefore(element, elements[index]);
+            }, 500);
+        }
+
+        //shuffle the board
+        function shuffle() {
+            randomizeBoard();
+            const grid = document.getElementById("grid");
+            updateGameBoard();
+            deselectAll();
+        }
+
+        //deselect all items
+        function deselectAll() {
+            findSelectedWords().forEach(i => i.classList.remove("selected"));
+            selected = [];
+        }
+
+        // check the selected Items
+        function checkSelection() {
+            if (selected.length !== 4) return;
+            
+            const groups = selected.map(i => words[i].group);
+            if (new Set(groups).size === 1) {
+                selected.forEach(i => {
+                    const item = document.getElementsByClassName("word")[i].classList.add("correct");
+                    foundWords.push(words[i]);
+                });
+
+                moveSelectedItemsToFirstFour();
+
+                //remove the found catagory from words
+                foundWords.forEach(i => {
+                    words = words.filter(word => word !== i);
+                });
+                deselectAll();
+
+                setTimeout(() => {
+                    updateGameBoard();
+                }, 500);
+            } else {
+                alert("Incorrect selection, try again!");
+            }
+        }
+
+        //this will need to be passed as a parameter to build the board
+        let words = [
+            { word: "Provost", group: "Fruit" }, { word: "ROTC", group: "Fruit" },
+            { word: "Reynolds", group: "Fruit" }, { word: "1783", group: "Fruit" },
+            { word: "Keys", group: "Cities" }, { word: "Phone", group: "Cities" },
+            { word: "Wallet", group: "Cities" }, { word: "ID", group: "Cities" },
+            { word: "Hat", group: "Games" }, { word: "Sticker", group: "Games" },
+            { word: "Phone Wallet", group: "Games" }, { word: "T-Shirt", group: "Games" },
+            { word: "President", group: "Colors" }, { word: "Financial", group: "Colors" },
+            { word: "Student", group: "Colors" }, { word: "Registrar", group: "Colors" }
+        ];
+
+        //found words
+        let foundWords = [];
+
+        //the Items Currently Selected
+        let selected = [];
+
+        randomizeBoard();
+        updateGameBoard();
+    </script>
+</body>
+</html>
