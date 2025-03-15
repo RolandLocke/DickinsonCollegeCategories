@@ -17,6 +17,14 @@
             max-width: 100%; 
             margin: auto; 
         }
+        .connections-game .grid .correct { 
+            display: grid; 
+            grid-column: 1 / -1;
+            gap: 10px; 
+            max-width: 100%; 
+            margin: none; 
+            white-space: pre-line;
+        }
         .connections-game .word { 
             padding: 3vw; 
             font-weight: bold;
@@ -79,20 +87,25 @@
 
         //build the gameboard from the randomised list
         function updateGameBoard() {
+            console.log(foundWords);
             if (document.getElementById("grid").innerHTML !== "") {
                 document.getElementById("grid").innerHTML = "";
-                foundWords.forEach((item, index) => {
+                for(let i = 0; i < foundWords.length; i += 4) {
                     let foundWordBox = document.createElement("div");
                     foundWordBox.classList.add("word", "correct");
-                    foundWordBox.setAttribute("difficulty", item.difficulty);
-                    foundWordBox.textContent = item.word;
+                    foundWordBox.setAttribute("difficulty", foundWords[i].difficulty);
+                    let textContent = foundWords[i].group + "\n|   ";
+                    console.log(foundWords[i].group);
+                    for(let j = i; j < i+4; j++) {
+                        textContent += foundWords[j].word + "   |   ";
+                    };
+                    foundWordBox.textContent = textContent;
                     grid.appendChild(foundWordBox);
-                });
+                }
             }
             words.forEach((item, index) => {
                 let wordBox = document.createElement("div");
                 wordBox.classList.add("word");
-                wordBox.setAttribute("difficulty", item.difficulty);
                 wordBox.textContent = item.word;
                 wordBox.onclick = () => toggleSelection(wordBox, item, index);
                 grid.appendChild(wordBox);
@@ -172,6 +185,7 @@
             if (selected.length !== 4) return;
             
             const groups = selected.map(i => words[i].group);
+            // objects in a set my only appear once, if the length of the set is 1 then all the items are the same
             if (new Set(groups).size === 1) {
                 selected.forEach(i => {
                     foundWords.push(words[i]);
@@ -198,12 +212,12 @@
         let words = [
             { word: "Provost", group: "Scholorships", difficulty: "Hard" }, { word: "ROTC", group: "Scholorships", difficulty: "Hard" },
             { word: "Reynolds", group: "Scholorships", difficulty: "Hard" }, { word: "1783", group: "Scholorships", difficulty: "Hard" },
-            { word: "Keys", group: "Things in Your Pockets", difficulty: "Difficult" }, { word: "Phone", group: "Things in Your Pockets", difficulty: "Difficult" },
-            { word: "Wallet", group: "Things in Your Pockets", difficulty: "Difficult" }, { word: "ID", group: "Things in Your Pockets", difficulty: "Difficult" },
-            { word: "Hat", group: "Common Dickinson Merch", difficulty: "Medium" }, { word: "Sticker", group: "Common Dickinson Merch", difficulty: "Medium" },
-            { word: "Phone Wallet", group: "Common Dickinson Merch", difficulty: "Medium" }, { word: "T-Shirt", group: "Common Dickinson Merch", difficulty: "Medium" },
-            { word: "President", group: "Offices On Campus", difficulty: "Easy" }, { word: "Financial", group: "Offices On Campus", difficulty: "Easy" },
-            { word: "Student", group: "Offices On Campus", difficulty: "Easy" }, { word: "Registrar", group: "Offices On Campus", difficulty: "Easy" }
+            { word: "Coat", group: "Caf Seat Savers", difficulty: "Difficult" }, { word: "Phone", group: "Caf Seat Savers", difficulty: "Difficult" },
+            { word: "Wallet", group: "Caf Seat Savers", difficulty: "Difficult" }, { word: "ID", group: "Caf Seat Savers", difficulty: "Difficult" },
+            { word: "Hat", group: "First Year Freebies", difficulty: "Medium" }, { word: "Sticker", group: "First Year Freebies", difficulty: "Medium" },
+            { word: "Phone Wallet", group: "First Year Freebies", difficulty: "Medium" }, { word: "T-Shirt", group: "First Year Freebies", difficulty: "Medium" },
+            { word: "President", group: "Campus Offices", difficulty: "Easy" }, { word: "Financial Aid", group: "Campus Offices", difficulty: "Easy" },
+            { word: "Student Life", group: "Campus Offices", difficulty: "Easy" }, { word: "Registrar", group: "Campus Offices", difficulty: "Easy" }
         ];
 
         //found words
