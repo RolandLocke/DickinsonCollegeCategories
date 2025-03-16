@@ -208,7 +208,12 @@
         function checkSelection() {
             if (selected.length !== 4) return;
 
-            const groups = selected.map(i => words[i].group);
+            let map = new Map();
+
+            const groups = selected.map(i => {
+                map.set(words[i].group, map.has(words[i].group) ? map.get(words[i].group) + 1 : 1);
+                return words[i].group;
+            });
             
             // objects in a set my only appear once, if the length of the set is 1 then all the items are the same
             if (new Set(groups).size === 1) {
@@ -227,15 +232,20 @@
                 setTimeout(() => {
                     updateGameBoard();
                 }, 600);
-
-            } else if(new Set(groups).size === 2) {
-                tries--;
-                updateTries();
-                alert("One away");
+                return;
             } else {
+                let oneAbsent = false;
+                map.forEach((value, key) => {
+                    if (value === 3) {
+                        alert("One away");
+                        oneAbsent = true;
+                    }
+                });
+                if(!oneAbsent) {
+                    alert("Incorrect selection, try again!");
+                }
                 tries--;
                 updateTries();
-                alert("Incorrect selection, try again!");
             }
         }
 
