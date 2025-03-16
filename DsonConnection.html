@@ -146,7 +146,7 @@
                 rowIndex = 3;
             }
 
-            const positions = elements.slice(rowIndex * 4, (rowIndex + 1) * 4).map(element => {
+            const positions = elements.slice(rowIndex, (rowIndex + 1) * 4).map(element => {
                 return {
                     element: element,
                     top: element.offsetTop,
