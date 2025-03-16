@@ -103,10 +103,33 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+
+        // Initialize variables from localStorage or set default values
+        var tries = localStorage.getItem('tries') ? JSON.parse(localStorage.getItem('tries')) : 4;
+        var foundWords = localStorage.getItem('foundWords') ? JSON.parse(localStorage.getItem('foundWords')) : [];
+        var selected = localStorage.getItem('selected') ? JSON.parse(localStorage.getItem('selected')) : [];
+        var words = localStorage.getItem('words') ? JSON.parse(localStorage.getItem('words')) : [
+            { word: "Provost", group: "Scholorships", difficulty: "Hard" }, { word: "ROTC", group: "Scholorships", difficulty: "Hard" },
+            { word: "Reynolds", group: "Scholorships", difficulty: "Hard" }, { word: "1783", group: "Scholorships", difficulty: "Hard" },
+            { word: "Coat", group: "Caf Seat Savers", difficulty: "Difficult" }, { word: "Phone", group: "Caf Seat Savers", difficulty: "Difficult" },
+            { word: "Wallet", group: "Caf Seat Savers", difficulty: "Difficult" }, { word: "ID", group: "Caf Seat Savers", difficulty: "Difficult" },
+            { word: "Hat", group: "First Year Freebies", difficulty: "Medium" }, { word: "Sticker", group: "First Year Freebies", difficulty: "Medium" },
+            { word: "Phone Wallet", group: "First Year Freebies", difficulty: "Medium" }, { word: "T-Shirt", group: "First Year Freebies", difficulty: "Medium" },
+            { word: "President", group: "Campus Offices", difficulty: "Easy" }, { word: "Financial Aid", group: "Campus Offices", difficulty: "Easy" },
+            { word: "Student Life", group: "Campus Offices", difficulty: "Easy" }, { word: "Registrar", group: "Campus Offices", difficulty: "Easy" }
+        ];
+
+        function updatelocals() {
+            localStorage.setItem('tries', JSON.stringify(tries));
+            localStorage.setItem('foundWords', JSON.stringify(foundWords));
+            localStorage.setItem('selected', JSON.stringify(selected));
+            localStorage.setItem('words', JSON.stringify(words));
+        }
+
         // randomize the board
         function randomizeBoard() {
             words.sort(() => Math.random() - 0.5);
-            const grid = document.getElementById("grid");
+            updatelocals();
         }
 
         function showModal(message) {
@@ -133,25 +156,28 @@
                 triesBoxes.innerText = triesInnerText;
             }
             
-            
+            updatelocals();
         }
 
         //build the gameboard from the randomised list
         function updateGameBoard() {
-            if (document.getElementById("grid").innerHTML !== "") {
-                document.getElementById("grid").innerHTML = "";
-                for(let i = 0; i < foundWords.length; i += 4) {
-                    let foundWordBox = document.createElement("div");
-                    foundWordBox.classList.add("word", "correct");
-                    foundWordBox.setAttribute("difficulty", foundWords[i].difficulty);
-                    let textContent = foundWords[i].group + "\n|   ";
-                    for(let j = i; j < i+4; j++) {
-                        textContent += foundWords[j].word + "   |   ";
-                    };
-                    foundWordBox.textContent = textContent;
-                    grid.appendChild(foundWordBox);
-                }
+            const grid = document.getElementById("grid");
+            grid.innerHTML = "";
+
+            // Display found words
+            for(let i = 0; i < foundWords.length; i += 4) {
+                let foundWordBox = document.createElement("div");
+                foundWordBox.classList.add("word", "correct");
+                foundWordBox.setAttribute("difficulty", foundWords[i].difficulty);
+                let textContent = foundWords[i].group + "\n|   ";
+                for(let j = i; j < i+4; j++) {
+                    textContent += foundWords[j].word + "   |   ";
+                };
+                foundWordBox.textContent = textContent;
+                grid.appendChild(foundWordBox);
             }
+
+            // Display remaining words
             words.forEach((item, index) => {
                 let wordBox = document.createElement("div");
                 wordBox.classList.add("word");
@@ -159,16 +185,17 @@
                 wordBox.onclick = () => toggleSelection(wordBox, item, index);
                 grid.appendChild(wordBox);
             });
+
             selected = [];
+            updatelocals();
         }
 
         function findSelectedWords() {
             const element = document.getElementsByClassName("selected");
-
             return Array.from(element);
         }
 
-        //toggle select an iten from the board
+        //toggle select an item from the board
         function toggleSelection(div, item, index) {
             if (selected.includes(index)) {
                 selected = selected.filter(i => i !== index);
@@ -177,6 +204,8 @@
                 selected.push(index);
                 div.classList.add("selected");
             }
+
+            updatelocals();
         }
 
         function moveSelectedItemsToFirstFour() {
@@ -213,12 +242,13 @@
                 element.style.transform = "";
                 grid.insertBefore(element, elements[index]);
             }, 500);
+
+            updatelocals();
         }
 
         //shuffle the board
         function shuffle() {
             randomizeBoard();
-            const grid = document.getElementById("grid");
             updateGameBoard();
             deselectAll();
         }
@@ -227,6 +257,7 @@
         function deselectAll() {
             findSelectedWords().forEach(i => i.classList.remove("selected"));
             selected = [];
+            updatelocals();
         }
 
         // check the selected Items
@@ -248,10 +279,12 @@
 
                 moveSelectedItemsToFirstFour();
 
-                //remove the found catagory from words
+                //remove the found category from words
                 foundWords.forEach(i => {
                     words = words.filter(word => word !== i);
                 });
+
+                updatelocals();
                 deselectAll();
 
                 setTimeout(() => {
@@ -274,31 +307,14 @@
             }
         }
 
-        //this will need to be passed as a parameter to build the board
-        let words = [
-            { word: "Provost", group: "Scholorships", difficulty: "Hard" }, { word: "ROTC", group: "Scholorships", difficulty: "Hard" },
-            { word: "Reynolds", group: "Scholorships", difficulty: "Hard" }, { word: "1783", group: "Scholorships", difficulty: "Hard" },
-            { word: "Coat", group: "Caf Seat Savers", difficulty: "Difficult" }, { word: "Phone", group: "Caf Seat Savers", difficulty: "Difficult" },
-            { word: "Wallet", group: "Caf Seat Savers", difficulty: "Difficult" }, { word: "ID", group: "Caf Seat Savers", difficulty: "Difficult" },
-            { word: "Hat", group: "First Year Freebies", difficulty: "Medium" }, { word: "Sticker", group: "First Year Freebies", difficulty: "Medium" },
-            { word: "Phone Wallet", group: "First Year Freebies", difficulty: "Medium" }, { word: "T-Shirt", group: "First Year Freebies", difficulty: "Medium" },
-            { word: "President", group: "Campus Offices", difficulty: "Easy" }, { word: "Financial Aid", group: "Campus Offices", difficulty: "Easy" },
-            { word: "Student Life", group: "Campus Offices", difficulty: "Easy" }, { word: "Registrar", group: "Campus Offices", difficulty: "Easy" }
-        ];
+        // Ensure the game board is properly initialized
+        function initializeGame() {
+            updateGameBoard();
+            updateTries();
+        }
 
-        //found words
-        let foundWords = [];
-
-        //the Items Currently Selected
-        let selected = [];
-
-        randomizeBoard();
-        updateGameBoard();
-
-        //number of tries
-        let tries = 4;
-
-        updateTries();
+        //start game
+        initializeGame();
     </script>
 </body>
 </html>
