@@ -72,7 +72,11 @@
         <div class="shadow-box">
             <div class="grid" id="grid"></div>
         </div>
-        <div class="mt-4 d-flex flex-wrap justify-content-center"></div>
+        <div class="tries grid mt-4 justify-content-center" style="all: unset;">
+            <p id="alert" style="font-size: 1.5em; display: inline;">Number of Tries:</p>
+            <p id="triesBox" style="font-size: 2em; display: inline;"></p>
+        </div>
+        <div class="mt-4 d-flex flex-wrap justify-content-center" style="all: unset;">
             <button class="btn btn-primary mr-2 mb-2" onclick="shuffle()">Shuffle Board</button>
             <button class="btn btn-success mr-2 mb-2" onclick="checkSelection()">Submit</button>
             <button class="btn btn-secondary mb-2" onclick="deselectAll()">Deselect All</button>
@@ -85,9 +89,30 @@
             const grid = document.getElementById("grid");
         }
 
+        //update the number of tries
+        function updateTries() {
+            let triesBoxes = document.getElementById("triesBox");
+            let triesInnerText = "";
+            triesBoxes.innerText = triesInnerText;
+
+            if(tries === 0) {
+                let textArea = document.getElementById("alert");
+                alert("You have run out of tries! Game Over!");
+                words = [];
+                updateGameBoard();
+                textArea.innerText = "Game Over!";
+            } else {
+                for (let i = 0; i < tries; i++) {
+                    triesInnerText += "  ■  ";
+                }
+                triesBoxes.innerText = triesInnerText;
+            }
+            
+            
+        }
+
         //build the gameboard from the randomised list
         function updateGameBoard() {
-            console.log(foundWords);
             if (document.getElementById("grid").innerHTML !== "") {
                 document.getElementById("grid").innerHTML = "";
                 for(let i = 0; i < foundWords.length; i += 4) {
@@ -95,7 +120,6 @@
                     foundWordBox.classList.add("word", "correct");
                     foundWordBox.setAttribute("difficulty", foundWords[i].difficulty);
                     let textContent = foundWords[i].group + "\n|   ";
-                    console.log(foundWords[i].group);
                     for(let j = i; j < i+4; j++) {
                         textContent += foundWords[j].word + "   |   ";
                     };
@@ -183,8 +207,9 @@
         // check the selected Items
         function checkSelection() {
             if (selected.length !== 4) return;
-            
+
             const groups = selected.map(i => words[i].group);
+            
             // objects in a set my only appear once, if the length of the set is 1 then all the items are the same
             if (new Set(groups).size === 1) {
                 selected.forEach(i => {
@@ -203,7 +228,13 @@
                     updateGameBoard();
                 }, 600);
 
+            } else if(new Set(groups).size === 2) {
+                tries--;
+                updateTries();
+                alert("One away");
             } else {
+                tries--;
+                updateTries();
                 alert("Incorrect selection, try again!");
             }
         }
@@ -228,6 +259,11 @@
 
         randomizeBoard();
         updateGameBoard();
+
+        //number of tries
+        let tries = 4;
+
+        updateTries();
     </script>
 </body>
 </html>
