@@ -17,17 +17,35 @@
             max-width: 100%; 
             margin: auto; 
         }
+        .connections-game .grid .correct { 
+            display: grid; 
+            grid-column: 1 / -1;
+            gap: 10px; 
+            max-width: 100%; 
+            margin: none; 
+            white-space: pre-line;
+        }
         .connections-game .word { 
             padding: 3vw; 
+            font-weight: bold;
             background: lightgray; 
             border-radius: 5px; 
             cursor: pointer; 
         }
         .connections-game .selected { 
-            background: yellow; 
+            background: grey; 
         }
-        .connections-game .correct { 
+        .connections-game .correct[difficulty="Easy"] { 
+            background: gold; 
+        }
+        .connections-game .correct[difficulty="Medium"] { 
             background: lightgreen; 
+        }
+        .connections-game .correct[difficulty="Difficult"] { 
+            background: deepskyblue; 
+        }
+        .connections-game .correct[difficulty="Hard"] { 
+            background: #CF9FFF; 
         }
         .connections-game .shadow-box { 
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
@@ -69,14 +87,21 @@
 
         //build the gameboard from the randomised list
         function updateGameBoard() {
+            console.log(foundWords);
             if (document.getElementById("grid").innerHTML !== "") {
                 document.getElementById("grid").innerHTML = "";
-                foundWords.forEach((item, index) => {
+                for(let i = 0; i < foundWords.length; i += 4) {
                     let foundWordBox = document.createElement("div");
                     foundWordBox.classList.add("word", "correct");
-                    foundWordBox.textContent = item.word;
+                    foundWordBox.setAttribute("difficulty", foundWords[i].difficulty);
+                    let textContent = foundWords[i].group + "\n|   ";
+                    console.log(foundWords[i].group);
+                    for(let j = i; j < i+4; j++) {
+                        textContent += foundWords[j].word + "   |   ";
+                    };
+                    foundWordBox.textContent = textContent;
                     grid.appendChild(foundWordBox);
-                });
+                }
             }
             words.forEach((item, index) => {
                 let wordBox = document.createElement("div");
@@ -121,7 +146,7 @@
                 rowIndex = 3;
             }
 
-            const positions = elements.slice(rowIndex * 4, (rowIndex + 1) * 4).map(element => {
+            const positions = elements.slice(rowIndex, (rowIndex + 1) * 4).map(element => {
                 return {
                     element: element,
                     top: element.offsetTop,
@@ -160,9 +185,9 @@
             if (selected.length !== 4) return;
             
             const groups = selected.map(i => words[i].group);
+            // objects in a set my only appear once, if the length of the set is 1 then all the items are the same
             if (new Set(groups).size === 1) {
                 selected.forEach(i => {
-                    const item = document.getElementsByClassName("word")[i].classList.add("correct");
                     foundWords.push(words[i]);
                 });
 
@@ -176,7 +201,8 @@
 
                 setTimeout(() => {
                     updateGameBoard();
-                }, 500);
+                }, 600);
+
             } else {
                 alert("Incorrect selection, try again!");
             }
@@ -184,14 +210,14 @@
 
         //this will need to be passed as a parameter to build the board
         let words = [
-            { word: "Provost", group: "Fruit" }, { word: "ROTC", group: "Fruit" },
-            { word: "Reynolds", group: "Fruit" }, { word: "1783", group: "Fruit" },
-            { word: "Keys", group: "Cities" }, { word: "Phone", group: "Cities" },
-            { word: "Wallet", group: "Cities" }, { word: "ID", group: "Cities" },
-            { word: "Hat", group: "Games" }, { word: "Sticker", group: "Games" },
-            { word: "Phone Wallet", group: "Games" }, { word: "T-Shirt", group: "Games" },
-            { word: "President", group: "Colors" }, { word: "Financial", group: "Colors" },
-            { word: "Student", group: "Colors" }, { word: "Registrar", group: "Colors" }
+            { word: "Provost", group: "Scholorships", difficulty: "Hard" }, { word: "ROTC", group: "Scholorships", difficulty: "Hard" },
+            { word: "Reynolds", group: "Scholorships", difficulty: "Hard" }, { word: "1783", group: "Scholorships", difficulty: "Hard" },
+            { word: "Coat", group: "Caf Seat Savers", difficulty: "Difficult" }, { word: "Phone", group: "Caf Seat Savers", difficulty: "Difficult" },
+            { word: "Wallet", group: "Caf Seat Savers", difficulty: "Difficult" }, { word: "ID", group: "Caf Seat Savers", difficulty: "Difficult" },
+            { word: "Hat", group: "First Year Freebies", difficulty: "Medium" }, { word: "Sticker", group: "First Year Freebies", difficulty: "Medium" },
+            { word: "Phone Wallet", group: "First Year Freebies", difficulty: "Medium" }, { word: "T-Shirt", group: "First Year Freebies", difficulty: "Medium" },
+            { word: "President", group: "Campus Offices", difficulty: "Easy" }, { word: "Financial Aid", group: "Campus Offices", difficulty: "Easy" },
+            { word: "Student Life", group: "Campus Offices", difficulty: "Easy" }, { word: "Registrar", group: "Campus Offices", difficulty: "Easy" }
         ];
 
         //found words
