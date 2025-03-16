@@ -76,10 +76,13 @@
             <p id="alert" style="font-size: 1.5em; display: inline;">Number of Tries:</p>
             <p id="triesBox" style="font-size: 2em; display: inline;"></p>
         </div>
-        <div class="mt-4 d-flex flex-wrap justify-content-center" style="all: unset;">
+        <div id="playing" class="mt-4 d-flex flex-wrap justify-content-center" style="all: unset;">
             <button class="btn btn-primary mr-2 mb-2" onclick="shuffle()">Shuffle Board</button>
             <button class="btn btn-success mr-2 mb-2" onclick="checkSelection()">Submit</button>
             <button class="btn btn-secondary mb-2" onclick="deselectAll()">Deselect All</button>
+        </div>
+        <div id="won" class="mt-4 d-flex flex-wrap justify-content-center" style="all: unset; visibility: hidden;">
+            <button class="btn btn-primary mr-2 mb-2" onclick="retry()">Retry</button>
         </div>
     </div>
     <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
@@ -118,6 +121,14 @@
             { word: "President", group: "Campus Offices", difficulty: "Easy" }, { word: "Financial Aid", group: "Campus Offices", difficulty: "Easy" },
             { word: "Student Life", group: "Campus Offices", difficulty: "Easy" }, { word: "Registrar", group: "Campus Offices", difficulty: "Easy" }
         ];
+
+        function retry() {
+            document.getElementById("playing").style.visibility = "visible";
+            document.getElementById("won").style.visibility = "hidden";
+            localStorage.clear();
+            initializeGame();
+            updatelocals()
+        }
 
         function updatelocals() {
             localStorage.setItem('tries', JSON.stringify(tries));
@@ -161,6 +172,14 @@
 
         //build the gameboard from the randomised list
         function updateGameBoard() {
+
+            if (words.length === 0) {
+                document.getElementById("playing").style.visibility = "hidden";
+                document.getElementById("won").style.visibility = "visible";
+            }
+
+            randomizeBoard();
+
             const grid = document.getElementById("grid");
             grid.innerHTML = "";
 
