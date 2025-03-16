@@ -120,7 +120,6 @@
                     foundWordBox.classList.add("word", "correct");
                     foundWordBox.setAttribute("difficulty", foundWords[i].difficulty);
                     let textContent = foundWords[i].group + "\n|   ";
-                    console.log(foundWords[i].group);
                     for(let j = i; j < i+4; j++) {
                         textContent += foundWords[j].word + "   |   ";
                     };
@@ -208,8 +207,9 @@
         // check the selected Items
         function checkSelection() {
             if (selected.length !== 4) return;
-            
+
             const groups = selected.map(i => words[i].group);
+            
             // objects in a set my only appear once, if the length of the set is 1 then all the items are the same
             if (new Set(groups).size === 1) {
                 selected.forEach(i => {
@@ -228,6 +228,10 @@
                     updateGameBoard();
                 }, 600);
 
+            } else if(new Set(groups).size === 2) {
+                tries--;
+                updateTries();
+                alert("One away");
             } else {
                 tries--;
                 updateTries();
