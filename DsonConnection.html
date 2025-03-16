@@ -108,21 +108,25 @@
     <script>
 
         // Initialize variables from localStorage or set default values
-        var tries = localStorage.getItem('tries') ? JSON.parse(localStorage.getItem('tries')) : 4;
-        var foundWords = localStorage.getItem('foundWords') ? JSON.parse(localStorage.getItem('foundWords')) : [];
-        var selected = localStorage.getItem('selected') ? JSON.parse(localStorage.getItem('selected')) : [];
-        var words = localStorage.getItem('words') ? JSON.parse(localStorage.getItem('words')) : [
-            { word: "Provost", group: "Scholorships", difficulty: "Hard" }, { word: "ROTC", group: "Scholorships", difficulty: "Hard" },
-            { word: "Reynolds", group: "Scholorships", difficulty: "Hard" }, { word: "1783", group: "Scholorships", difficulty: "Hard" },
-            { word: "Coat", group: "Caf Seat Savers", difficulty: "Difficult" }, { word: "Phone", group: "Caf Seat Savers", difficulty: "Difficult" },
-            { word: "Wallet", group: "Caf Seat Savers", difficulty: "Difficult" }, { word: "ID", group: "Caf Seat Savers", difficulty: "Difficult" },
-            { word: "Hat", group: "First Year Freebies", difficulty: "Medium" }, { word: "Sticker", group: "First Year Freebies", difficulty: "Medium" },
-            { word: "Phone Wallet", group: "First Year Freebies", difficulty: "Medium" }, { word: "T-Shirt", group: "First Year Freebies", difficulty: "Medium" },
-            { word: "President", group: "Campus Offices", difficulty: "Easy" }, { word: "Financial Aid", group: "Campus Offices", difficulty: "Easy" },
-            { word: "Student Life", group: "Campus Offices", difficulty: "Easy" }, { word: "Registrar", group: "Campus Offices", difficulty: "Easy" }
-        ];
+        function createData() {
+            var tries = localStorage.getItem('tries') ? JSON.parse(localStorage.getItem('tries')) : 4;
+            var foundWords = localStorage.getItem('foundWords') ? JSON.parse(localStorage.getItem('foundWords')) : [];
+            var selected = localStorage.getItem('selected') ? JSON.parse(localStorage.getItem('selected')) : [];
+            var words = localStorage.getItem('words') ? JSON.parse(localStorage.getItem('words')) : [
+                { word: "Provost", group: "Scholorships", difficulty: "Hard" }, { word: "ROTC", group: "Scholorships", difficulty: "Hard" },
+                { word: "Reynolds", group: "Scholorships", difficulty: "Hard" }, { word: "1783", group: "Scholorships", difficulty: "Hard" },
+                { word: "Coat", group: "Caf Seat Savers", difficulty: "Difficult" }, { word: "Phone", group: "Caf Seat Savers", difficulty: "Difficult" },
+                { word: "Wallet", group: "Caf Seat Savers", difficulty: "Difficult" }, { word: "ID", group: "Caf Seat Savers", difficulty: "Difficult" },
+                { word: "Hat", group: "First Year Freebies", difficulty: "Medium" }, { word: "Sticker", group: "First Year Freebies", difficulty: "Medium" },
+                { word: "Phone Wallet", group: "First Year Freebies", difficulty: "Medium" }, { word: "T-Shirt", group: "First Year Freebies", difficulty: "Medium" },
+                { word: "President", group: "Campus Offices", difficulty: "Easy" }, { word: "Financial Aid", group: "Campus Offices", difficulty: "Easy" },
+                { word: "Student Life", group: "Campus Offices", difficulty: "Easy" }, { word: "Registrar", group: "Campus Offices", difficulty: "Easy" }
+            ];
+        }
+        
 
         function retry() {
+            createData();
             document.getElementById("playing").style.visibility = "visible";
             document.getElementById("won").style.visibility = "hidden";
             localStorage.clear();
