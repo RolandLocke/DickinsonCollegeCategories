@@ -81,6 +81,9 @@
             <button class="btn btn-success mr-2 mb-2" onclick="checkSelection()">Submit</button>
             <button class="btn btn-secondary mb-2" onclick="deselectAll()">Deselect All</button>
         </div>
+        <div id="won" class="mt-4 d-flex flex-wrap justify-content-center" style="all: unset; visibility: hidden;">
+            <button class="btn btn-primary mr-2 mb-2" onclick="retry()">Retry</button>
+        </div>
     </div>
     <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -116,6 +119,11 @@
             { word: "President", group: "Campus Offices", difficulty: "Easy" }, { word: "Financial Aid", group: "Campus Offices", difficulty: "Easy" },
             { word: "Student Life", group: "Campus Offices", difficulty: "Easy" }, { word: "Registrar", group: "Campus Offices", difficulty: "Easy" }
         ];
+        
+        if (words.length === 0) {
+            document.getElementById("playing").style.visibility = "visible";
+            document.getElementById("won").style.visibility = "hidden";
+        }
 
         function updatelocals() {
             localStorage.setItem('tries', JSON.stringify(tries));
@@ -317,6 +325,26 @@
         function initializeGame() {
             updateGameBoard();
             updateTries();
+        }
+
+        function retry() {
+            tries = 4;
+            foundWords = [];
+            selected = [];
+            words = [
+                { word: "Provost", group: "Scholorships", difficulty: "Hard" }, { word: "ROTC", group: "Scholorships", difficulty: "Hard" },
+                { word: "Reynolds", group: "Scholorships", difficulty: "Hard" }, { word: "1783", group: "Scholorships", difficulty: "Hard" },
+                { word: "Coat", group: "Caf Seat Savers", difficulty: "Difficult" }, { word: "Phone", group: "Caf Seat Savers", difficulty: "Difficult" },
+                { word: "Wallet", group: "Caf Seat Savers", difficulty: "Difficult" }, { word: "ID", group: "Caf Seat Savers", difficulty: "Difficult" },
+                { word: "Hat", group: "First Year Freebies", difficulty: "Medium" }, { word: "Sticker", group: "First Year Freebies", difficulty: "Medium" },
+                { word: "Phone Wallet", group: "First Year Freebies", difficulty: "Medium" }, { word: "T-Shirt", group: "First Year Freebies", difficulty: "Medium" },
+                { word: "President", group: "Campus Offices", difficulty: "Easy" }, { word: "Financial Aid", group: "Campus Offices", difficulty: "Easy" },
+                { word: "Student Life", group: "Campus Offices", difficulty: "Easy" }, { word: "Registrar", group: "Campus Offices", difficulty: "Easy" }
+            ];
+            document.getElementById("playing").style.visibility = "visible";
+            document.getElementById("won").style.visibility = "hidden";
+            updatelocals();
+            initializeGame();
         }
 
         //start game
