@@ -1,9 +1,9 @@
 
-# Dickinson College Connections Game
+# Dickinson College Categories Game
 This is a project for the Student newspaper: The Dickinsonian. 
 The game is currently live at the following link: https://thedickinsonian.com/game/ 
 
-This project is a web-based game called "Dickinson College Connections," designed to challenge players to find four groups of four Dickinson College related words. The game is built using HTML, CSS, and JavaScript, and leverages Bootstrap for styling and jQuery for handling modal dialogs.
+This project is a web-based game called "Dickinson College Categories," designed to challenge players to find four groups of four Dickinson College related words. The game is built using HTML, CSS, and JavaScript, and leverages Bootstrap for styling and jQuery for handling modal dialogs.
 
 ![image](https://github.com/user-attachments/assets/bc030d45-a1ac-4a34-9a39-cff9c31310b5)
 
